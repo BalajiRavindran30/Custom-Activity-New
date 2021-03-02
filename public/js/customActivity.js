@@ -86,6 +86,22 @@ define([
             $('#message').html(message);
             showStep(null, 3);
         }
+
+        var body = { 
+            folderName: 'Data Extension'
+        };
+
+        $.ajax({
+            url: '/journeybuilder/initiate/',
+            type: 'POST',
+            data: body,
+            success: function (data) {
+                console.log("retrieve folder success : ", data);       
+            },
+            error: function (e) {
+                console.log("retrieve folder Error : ", e);
+            }
+        });
     }
 
     function onGetTokens (tokens) {

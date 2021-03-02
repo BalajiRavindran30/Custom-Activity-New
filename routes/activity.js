@@ -1,5 +1,6 @@
 'use strict';
 var util = require('util');
+var FuelSoap = require('fuel-soap');
 
 // Deps
 const Path = require('path');
@@ -95,6 +96,52 @@ exports.execute = function (req, res) {
             return res.status(400).end();
         }
     });
+};
+
+exports.initiate = function (req, res) {
+    console.log('body is '+JSON.stringify(req.body));
+
+    var options = {
+        auth: {
+            clientId: 'mkugi9oxe33ic1hwr2k0q87q', 
+            clientSecret: 'PatIEzIV1AeQft2Wu6HRriHk',
+            authVersion: 2,
+            authUrl: 'https://mcj6cy1x9m-t5h5tz0bfsyqj38ky.auth.marketingcloudapis.com/v2/token/',
+            authOptions:{
+                authVersion: 2
+            }
+        }
+        , soapEndpoint: 'https://mcj6cy1x9m-t5h5tz0bfsyqj38ky.soap.marketingcloudapis.com/Service.asmx'
+    };
+    
+    var client = new FuelSoap(options);
+
+    var filterOptions = {
+        filter: {
+          leftOperand: 'Name',
+          operator: 'equals',
+          rightOperand:  req.body.folderName
+        },
+        clientIDs: [{ ID:514005798 }]
+    };
+
+    client.retrieve(
+        'DataFolder',
+        ["ID","Name"],
+        filterOptions,
+        function( err, response ) {
+          if ( err ) {
+            // error here
+            console.log( err );
+            return;
+          }
+      
+          // response.body === parsed soap response (JSON)
+          // response.res === full response from request client
+          console.log(response.body);
+          res.status(200).send(response.body);
+    });
+    
 };
 
 
